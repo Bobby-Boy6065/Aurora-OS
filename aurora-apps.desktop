@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Aurora Applications
+Comment=Launch common desktop applications
+Exec=xfce4-appfinder
+Icon=applications-all
+Categories=Utility;

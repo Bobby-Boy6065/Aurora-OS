@@ -1,0 +1,68 @@
+#!/usr/bin/env python3
+"""Aurora OS V3 top bar, built with GTK3 and backed by real system commands."""
+import gi
+import subprocess
+import datetime
+import os
+
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk, GLib
+
+CSS = b'''window { background: rgba(18,25,42,0.92); color: #f5f7ff; }
+button { background: transparent; color: #f5f7ff; border: 0; border-radius: 8px; padding: 3px 9px; }
+button:hover { background: rgba(255,255,255,0.13); }
+label { color: #f5f7ff; }'''
+
+class AuroraPanel(Gtk.Window):
+    def __init__(self):
+        super().__init__(type=Gtk.WindowType.TOPLEVEL)
+        self.set_title('Aurora Panel')
+        self.set_decorated(False)
+        self.set_keep_above(True)
+        self.set_skip_taskbar_hint(True)
+        self.set_skip_pager_hint(True)
+        self.set_type_hint(3) # dock-ish utility window
+        self.set_default_size(900, 34)
+        self.set_size_request(-1, 34)
+        self.set_position(Gtk.WindowPosition.CENTER)
+        self.connect('realize', self.place_top)
+        provider = Gtk.CssProvider(); provider.load_from_data(CSS)
+        Gtk.StyleContext.add_provider_for_screen(self.get_screen(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+        bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        bar.set_margin_start(8); bar.set_margin_end(8)
+        self.add(bar)
+        self.add_menu_button(bar, '◈ Aurora', self.main_menu)
+        self.add_menu_button(bar, 'Applications', lambda: self.run('aurora-launcher'))
+        self.add_menu_button(bar, 'Files', lambda: self.run('thunar'))
+        self.add_menu_button(bar, 'Store', lambda: self.run('gnome-software'))
+        self.add_menu_button(bar, 'Settings', lambda: self.run('aurora-control-center'))
+        spacer = Gtk.Box(); spacer.set_hexpand(True); bar.pack_start(spacer, True, True, 0)
+        self.add_menu_button(bar, 'Wi-Fi', lambda: self.run('nm-connection-editor'))
+        self.add_menu_button(bar, 'Sound', lambda: self.run('pavucontrol'))
+        self.clock = Gtk.Label(label='')
+        bar.pack_end(self.clock, False, False, 8)
+        GLib.timeout_add_seconds(1, self.tick)
+        self.tick()
+    def place_top(self, *_):
+        screen = self.get_screen(); monitor = screen.get_primary_monitor(); rect = screen.get_monitor_geometry(monitor)
+        self.move(rect.x, rect.y); self.set_size_request(rect.width, 34)
+    def run(self, command):
+        try: subprocess.Popen(command.split(), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        except Exception: pass
+    def add_menu_button(self, box, label, callback):
+        button = Gtk.Button(label=label); button.set_relief(Gtk.ReliefStyle.NONE); button.connect('clicked', lambda *_: callback()); box.pack_start(button, False, False, 0)
+    def menu(self, items):
+        pop = Gtk.Menu()
+        for label, command in items:
+            item = Gtk.MenuItem(label=label); item.connect('activate', lambda _i, c=command: self.run(c)); pop.append(item)
+        pop.show_all(); pop.popup_at_widget(self, Gdk.Gravity.SOUTH_WEST, Gdk.Gravity.NORTH_WEST, None)
+    def main_menu(self):
+        self.menu([('Aurora Welcome','aurora-welcome-v3'), ('App Launcher','aurora-launcher'), ('Control Center','aurora-control-center'), ('Software Store','gnome-software'), ('Dark Appearance','aurora-theme-switch dark'), ('Light Appearance','aurora-theme-switch light'), ('Tablet Mode','aurora-tablet-mode on'), ('Desktop Mode','aurora-tablet-mode off'), ('System Monitor','xfce4-taskmanager'), ('Terminal','xfce4-terminal'), ('Lock Screen','xflock4'), ('Log Out','xfce4-session-logout')])
+    def apps_menu(self):
+        self.menu([('Web Browser','firefox-esr'), ('Files','thunar'), ('Terminal','xfce4-terminal'), ('Notes','mousepad'), ('Calculator','galculator'), ('Photos','ristretto'), ('PDF Viewer','evince'), ('System Monitor','xfce4-taskmanager'), ('Software Store','gnome-software'), ('Full-screen Launcher','aurora-launcher')])
+    def tick(self):
+        self.clock.set_text(datetime.datetime.now().strftime('%a  %b %d   %I:%M %p'))
+        return True
+
+from gi.repository import Gdk
+win = AuroraPanel(); win.show_all(); Gtk.main()

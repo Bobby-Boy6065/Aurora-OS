@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Toggle Aurora Tablet Mode
+Comment=Adjust XFCE panel for touch use
+Exec=aurora-tablet-mode on
+Icon=preferences-desktop
+Terminal=true
+Type=Application
+Categories=Settings;

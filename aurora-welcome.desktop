@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Aurora Welcome
+Exec=firefox-esr --new-window file:///usr/share/aurora/welcome.html
+Icon=aurora
+Terminal=false
+Categories=System;

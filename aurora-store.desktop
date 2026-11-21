@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Aurora Store
+Comment=Browse and install software from trusted repositories
+Exec=gnome-software
+Icon=software-center
+Categories=System;PackageManager;

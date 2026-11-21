@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Aurora Window Effects
+Exec=picom --config /usr/share/aurora/picom.conf
+OnlyShowIn=XFCE;
+X-GNOME-Autostart-enabled=true

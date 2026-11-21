@@ -1,0 +1,30 @@
+#!/usr/bin/env python3
+"""Aurora V4 appearance panel; controls real XFCE settings where available."""
+import subprocess
+import gi
+gi.require_version('Gtk','3.0')
+from gi.repository import Gtk
+WALL='/usr/share/aurora/aurora-wallpaper.svg'
+class Appearance(Gtk.Window):
+    def __init__(self):
+        super().__init__(title='Aurora Appearance')
+        self.set_default_size(480,330); self.set_border_width(20)
+        box=Gtk.Box(orientation=Gtk.Orientation.VERTICAL,spacing=14); self.add(box)
+        h=Gtk.Label(); h.set_markup('<span size="22000" weight="bold">Appearance</span>'); h.set_xalign(0); box.pack_start(h,False,False,0)
+        box.pack_start(Gtk.Label(label='Choose a color theme or desktop layout.',xalign=0),False,False,0)
+        row=Gtk.Box(spacing=10)
+        for label,mode in [('Dark','dark'),('Light','light')]:
+            b=Gtk.Button(label=label); b.set_size_request(140,64); b.connect('clicked',lambda _b,m=mode:self.theme(m)); row.pack_start(b,True,True,0)
+        box.pack_start(row,False,False,0)
+        for label,cmd in [('Apply Aurora wallpaper',self.wallpaper),('Enable Tablet Mode',lambda:self.run(['aurora-tablet-mode','on'])),('Disable Tablet Mode',lambda:self.run(['aurora-tablet-mode','off']))]:
+            b=Gtk.Button(label=label); b.connect('clicked',lambda _b,c=cmd:c() if callable(c) else self.run(c)); box.pack_start(b,False,False,0)
+        self.status=Gtk.Label(label='Settings apply to the current XFCE user session.'); self.status.set_xalign(0); box.pack_end(self.status,False,False,0)
+    def run(self,args):
+        try: subprocess.Popen(args,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+        except OSError as e: self.status.set_text(f'Could not start command: {e}')
+    def theme(self,mode): self.run(['aurora-theme-switch',mode]); self.status.set_text(f'{mode.capitalize()} theme requested.')
+    def wallpaper(self):
+        props=['/backdrop/screen0/monitor0/workspace0/last-image','/backdrop/screen0/monitor0/workspace1/last-image']
+        for p in props: self.run(['xfconf-query','-c','xfce4-desktop','-p',p,'-n','-t','string','-s',WALL])
+        self.status.set_text('Aurora wallpaper requested for XFCE desktop.')
+win=Appearance(); win.connect('destroy',Gtk.main_quit); win.show_all(); Gtk.main()

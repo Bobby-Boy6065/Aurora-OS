@@ -1,0 +1,8 @@
+/* Aurora OS V3 GTK defaults: original blue-violet glass-inspired palette */
+@define-color aurora_bg #172235;
+@define-color aurora_accent #7f9cff;
+@define-color aurora_text #f3f6ff;
+window, dialog { background-color: @aurora_bg; color: @aurora_text; }
+button { border-radius: 10px; }
+button:hover { background-color: alpha(@aurora_accent, 0.18); }
+entry, textview, treeview { border-radius: 8px; }

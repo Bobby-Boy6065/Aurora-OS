@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Aurora V3 Welcome
+Comment=Welcome and quick-start guide
+Exec=xdg-open /usr/share/aurora/welcome-v3.html
+Icon=help-about
+Categories=System;

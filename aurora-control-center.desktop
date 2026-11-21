@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Aurora Control Center
+Comment=Desktop appearance and system shortcuts
+Exec=aurora-control-center
+Icon=aurora
+Terminal=false
+Categories=Settings;System;

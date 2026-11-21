@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Aurora Appearance
+Comment=Theme, wallpaper and tablet-mode settings
+Exec=aurora-appearance
+Icon=preferences-desktop-wallpaper
+Terminal=false
+Type=Application
+Categories=Settings;DesktopSettings;

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Aurora Panel
+Comment=V3 top bar and quick launch menu
+Exec=aurora-panel
+Icon=preferences-desktop
+X-GNOME-Autostart-enabled=true

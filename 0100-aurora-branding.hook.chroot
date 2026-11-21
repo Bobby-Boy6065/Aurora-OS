@@ -1,0 +1,16 @@
+#!/bin/sh
+set -e
+mkdir -p /usr/share/aurora /usr/share/applications
+if [ -f /usr/share/aurora/aurora-wallpaper.svg ]; then
+  install -m 0644 /usr/share/aurora/aurora-wallpaper.svg /usr/share/backgrounds/aurora-wallpaper.svg || true
+fi
+# Apply theme and icon defaults to newly-created live user sessions.
+mkdir -p /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml
+cat > /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml <<'XML'
+<?xml version="1.0" encoding="UTF-8"?>
+<channel name="xsettings" version="1.0">
+ <property name="Net" type="empty"><property name="ThemeName" type="string" value="Arc"/><property name="IconThemeName" type="string" value="Papirus"/></property>
+ <property name="Gtk" type="empty"><property name="FontName" type="string" value="Noto Sans 10"/><property name="CursorThemeName" type="string" value="Adwaita"/></property>
+</channel>
+XML
+# Safe live-user convenience; does not grant passwordless privileges to installed users.
